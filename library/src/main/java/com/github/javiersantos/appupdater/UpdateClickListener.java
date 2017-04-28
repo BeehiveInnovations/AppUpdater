@@ -13,18 +13,25 @@ import java.net.URL;
  */
 public class UpdateClickListener implements DialogInterface.OnClickListener {
 
-    private final Context context;
-    private final UpdateFrom updateFrom;
-    private final URL apk;
+  private final Context context;
+  private final UpdateFrom updateFrom;
+  private final URL apk;
+  private final AppUpdater appUpdater;
 
-    public UpdateClickListener(final Context context, final UpdateFrom updateFrom, final URL apk) {
-        this.context = context;
-        this.updateFrom = updateFrom;
-        this.apk = apk;
-    }
+  public UpdateClickListener(final Context context, AppUpdater appUpdater,
+                             final UpdateFrom updateFrom, final URL apk) {
+    this.context = context;
+    this.appUpdater = appUpdater;
+    this.updateFrom = updateFrom;
+    this.apk = apk;
+  }
 
-    @Override
-    public void onClick(final DialogInterface dialog, final int which) {
-        UtilsLibrary.goToUpdate(context, updateFrom, apk);
+  @Override
+  public void onClick(final DialogInterface dialog, final int which) {
+    UtilsLibrary.goToUpdate(context, updateFrom, apk);
+
+    if (appUpdater.getUpdateReactionListener() != null) {
+      appUpdater.getUpdateReactionListener().updatePressed();
     }
+  }
 }
