@@ -66,7 +66,7 @@ class UtilsLibrary {
     static Boolean isUpdateAvailable(Update installedVersion, Update latestVersion) {
         Boolean res = false;
 
-        Log.v("APP UPDATE", "Installed [build: "+installedVersion.getLatestVersionCode()+", v: "+installedVersion.getLatestVersion()+"]\nLatest [build: "+latestVersion.getLatestVersionCode()+", v: "+latestVersion.getLatestVersion()+"]");
+        Log.d("APP UPDATE", "Installed [build: "+installedVersion.getLatestVersionCode()+", v: "+installedVersion.getLatestVersion()+"]\nLatest [build: "+latestVersion.getLatestVersionCode()+", v: "+latestVersion.getLatestVersion()+"]");
 
         if (latestVersion.getLatestVersionCode() != null && latestVersion.getLatestVersionCode() > 0) {
             return latestVersion.getLatestVersionCode() > installedVersion.getLatestVersionCode();
