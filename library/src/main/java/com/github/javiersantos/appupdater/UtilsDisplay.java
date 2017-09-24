@@ -1,6 +1,8 @@
 package com.github.javiersantos.appupdater;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -18,6 +20,7 @@ import com.github.javiersantos.appupdater.enums.UpdateFrom;
 import java.net.URL;
 
 class UtilsDisplay {
+  static String channel_updates = "com.beehive.pronounce.updates";
 
   static AlertDialog showUpdateAvailableDialog(final Context context, String title, String content,
                                                String btnNegative, String btnPositive,
@@ -25,7 +28,8 @@ class UtilsDisplay {
                                                final DialogInterface.OnClickListener updateClickListener,
                                                final DialogInterface.OnClickListener dismissClickListener,
                                                final DialogInterface.OnClickListener disableClickListener) {
-    return new AlertDialog.Builder(new ContextThemeWrapper(context, Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault_Light_Dialog: android.R.style.Theme_Dialog))
+    return new AlertDialog.Builder(new ContextThemeWrapper(context,
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault_Light_Dialog : android.R.style.Theme_Dialog))
       .setTitle(title)
       .setMessage(content)
       .setPositiveButton(btnPositive, updateClickListener)
@@ -78,6 +82,9 @@ class UtilsDisplay {
   static void showUpdateAvailableNotification(Context context, String title, String content,
                                               UpdateFrom updateFrom, URL apk,
                                               int smallIconResourceId) {
+
+    createNotificationChannel(context);
+
     PendingIntent contentIntent = PendingIntent.getActivity(context, 0, context.getPackageManager()
         .getLaunchIntentForPackage(UtilsLibrary.getAppPackageName(context)),
       PendingIntent.FLAG_CANCEL_CURRENT);
@@ -86,7 +93,7 @@ class UtilsDisplay {
       .getActivity(context, 0, UtilsLibrary.intentToUpdate(context, updateFrom, apk),
         PendingIntent.FLAG_CANCEL_CURRENT);
 
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channel_updates)
       .setContentIntent(pendingIntentUpdate)
       .setContentTitle(title)
       .setContentText(content)
@@ -102,5 +109,28 @@ class UtilsDisplay {
     NotificationManager notificationManager = (NotificationManager) context
       .getSystemService(Context.NOTIFICATION_SERVICE);
     notificationManager.notify(0, builder.build());
+  }
+
+  private static void createNotificationChannel(Context context) {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      NotificationManager mNotificationManager = (NotificationManager) context
+        .getSystemService(Context.NOTIFICATION_SERVICE);
+
+      // The id of the channel.
+      // The user-visible name of the channel.
+      CharSequence name = "Updates";
+      // The user-visible description of the channel.
+      String description = "Update notifications";
+      int importance = NotificationManager.IMPORTANCE_HIGH;
+
+      NotificationChannel mChannel = new NotificationChannel(channel_updates, name, importance);
+      mChannel.setDescription(description);
+      mChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+      mChannel.setShowBadge(true);
+
+      if (mNotificationManager != null) {
+        mNotificationManager.createNotificationChannel(mChannel);
+      }
+    }
   }
 }
