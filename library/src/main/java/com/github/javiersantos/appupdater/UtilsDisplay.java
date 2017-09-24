@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.media.RingtoneManager;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
@@ -24,7 +25,7 @@ class UtilsDisplay {
                                                final DialogInterface.OnClickListener updateClickListener,
                                                final DialogInterface.OnClickListener dismissClickListener,
                                                final DialogInterface.OnClickListener disableClickListener) {
-    return new AlertDialog.Builder(new ContextThemeWrapper(context, android.R.style.Theme_Dialog))
+    return new AlertDialog.Builder(new ContextThemeWrapper(context, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? android.R.style.Theme_Material_Light_Dialog: android.R.style.Theme_Dialog))
       .setTitle(title)
       .setMessage(content)
       .setPositiveButton(btnPositive, updateClickListener)
