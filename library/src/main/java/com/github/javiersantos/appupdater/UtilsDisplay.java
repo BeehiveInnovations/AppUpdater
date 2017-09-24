@@ -9,6 +9,7 @@ import android.media.RingtoneManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 
 import com.github.javiersantos.appupdater.enums.UpdateFrom;
@@ -23,7 +24,7 @@ class UtilsDisplay {
                                                final DialogInterface.OnClickListener updateClickListener,
                                                final DialogInterface.OnClickListener dismissClickListener,
                                                final DialogInterface.OnClickListener disableClickListener) {
-    return new AlertDialog.Builder(context)
+    return new AlertDialog.Builder(new ContextThemeWrapper(context, android.R.style.Theme_Dialog))
       .setTitle(title)
       .setMessage(content)
       .setPositiveButton(btnPositive, updateClickListener)
