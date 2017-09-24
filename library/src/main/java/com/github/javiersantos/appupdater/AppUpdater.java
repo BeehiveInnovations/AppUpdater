@@ -43,7 +43,7 @@ public class AppUpdater implements IAppUpdater {
     this.libraryPreferences = new LibraryPreferences(context);
     this.display = Display.DIALOG;
     this.updateFrom = UpdateFrom.GOOGLE_PLAY;
-    this.duration = Duration.NORMAL;
+    this.duration = Duration.INDEFINITE;
     this.showEvery = 1;
     this.showAppUpdated = false;
     this.iconResId = R.drawable.ic_stat_name;
@@ -343,7 +343,7 @@ public class AppUpdater implements IAppUpdater {
 
         Update installedUpdate = new Update(UtilsLibrary.getAppInstalledVersion(context),
           UtilsLibrary.getAppInstalledVersionCode(context));
-        if (UtilsLibrary.isUpdateAvailable(installedUpdate, update)) {
+        if (UtilsLibrary.isUpdateAvailable(installedUpdate, update) || showAppUpdated) {
           Integer successfulChecks = libraryPreferences.getSuccessfulChecks();
           if (UtilsLibrary.isAbleToShow(successfulChecks, showEvery)) {
             switch (display) {
@@ -374,24 +374,6 @@ public class AppUpdater implements IAppUpdater {
             }
           }
           libraryPreferences.setSuccessfulChecks(successfulChecks + 1);
-        } else if (showAppUpdated) {
-          switch (display) {
-            case DIALOG:
-              alertDialog = UtilsDisplay.showUpdateNotAvailableDialog(context, titleNoUpdate,
-                getDescriptionNoUpdate(context));
-              alertDialog.show();
-              break;
-            case SNACKBAR:
-              snackbar = UtilsDisplay
-                .showUpdateNotAvailableSnackbar(context, getDescriptionNoUpdate(context),
-                  UtilsLibrary.getDurationEnumToBoolean(duration));
-              snackbar.show();
-              break;
-            case NOTIFICATION:
-              UtilsDisplay.showUpdateNotAvailableNotification(context, titleNoUpdate,
-                getDescriptionNoUpdate(context), iconResId);
-              break;
-          }
         }
       }
 

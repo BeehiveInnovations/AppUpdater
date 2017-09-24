@@ -25,7 +25,7 @@ class UtilsDisplay {
                                                final DialogInterface.OnClickListener updateClickListener,
                                                final DialogInterface.OnClickListener dismissClickListener,
                                                final DialogInterface.OnClickListener disableClickListener) {
-    return new AlertDialog.Builder(new ContextThemeWrapper(context, Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? android.R.style.Theme_Material_Light_Dialog: android.R.style.Theme_Dialog))
+    return new AlertDialog.Builder(new ContextThemeWrapper(context, Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH ? android.R.style.Theme_DeviceDefault_Light_Dialog: android.R.style.Theme_Dialog))
       .setTitle(title)
       .setMessage(content)
       .setPositiveButton(btnPositive, updateClickListener)
@@ -75,33 +75,19 @@ class UtilsDisplay {
     return snackbar;
   }
 
-  static Snackbar showUpdateNotAvailableSnackbar(final Context context, String content,
-                                                 Boolean indefinite) {
-    Activity activity = (Activity) context;
-    int snackbarTime = indefinite ? Snackbar.LENGTH_INDEFINITE : Snackbar.LENGTH_LONG;
-
-        /*if (indefinite) {
-            snackbarTime = Snackbar.LENGTH_INDEFINITE;
-        } else {
-            snackbarTime = Snackbar.LENGTH_LONG;
-        }*/
-
-
-    return Snackbar.make(activity.findViewById(android.R.id.content), content, snackbarTime);
-  }
-
   static void showUpdateAvailableNotification(Context context, String title, String content,
                                               UpdateFrom updateFrom, URL apk,
                                               int smallIconResourceId) {
     PendingIntent contentIntent = PendingIntent.getActivity(context, 0, context.getPackageManager()
         .getLaunchIntentForPackage(UtilsLibrary.getAppPackageName(context)),
       PendingIntent.FLAG_CANCEL_CURRENT);
+
     PendingIntent pendingIntentUpdate = PendingIntent
       .getActivity(context, 0, UtilsLibrary.intentToUpdate(context, updateFrom, apk),
         PendingIntent.FLAG_CANCEL_CURRENT);
 
     NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-      .setContentIntent(contentIntent)
+      .setContentIntent(pendingIntentUpdate)
       .setContentTitle(title)
       .setContentText(content)
       .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
@@ -109,6 +95,7 @@ class UtilsDisplay {
       .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
       .setOnlyAlertOnce(true)
       .setAutoCancel(true)
+      .setPriority(NotificationCompat.PRIORITY_HIGH)
       .addAction(R.drawable.ic_system_update_white_24dp,
         context.getResources().getString(R.string.appupdater_btn_update), pendingIntentUpdate);
 
@@ -116,26 +103,4 @@ class UtilsDisplay {
       .getSystemService(Context.NOTIFICATION_SERVICE);
     notificationManager.notify(0, builder.build());
   }
-
-  static void showUpdateNotAvailableNotification(Context context, String title, String content,
-                                                 int smallIconResourceId) {
-    PendingIntent contentIntent = PendingIntent.getActivity(context, 0, context.getPackageManager()
-        .getLaunchIntentForPackage(UtilsLibrary.getAppPackageName(context)),
-      PendingIntent.FLAG_CANCEL_CURRENT);
-
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
-      .setContentIntent(contentIntent)
-      .setContentTitle(title)
-      .setContentText(content)
-      .setStyle(new NotificationCompat.BigTextStyle().bigText(content))
-      .setSmallIcon(smallIconResourceId)
-      .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-      .setOnlyAlertOnce(true)
-      .setAutoCancel(true);
-
-    NotificationManager notificationManager = (NotificationManager) context
-      .getSystemService(Context.NOTIFICATION_SERVICE);
-    notificationManager.notify(0, builder.build());
-  }
-
 }
